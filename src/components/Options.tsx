@@ -1,12 +1,18 @@
-import { useMemo, useState } from 'react';
+import { Dispatch } from 'react';
 
 type TOptions = 'Projects' | 'Skills';
 
-export function Options() {
-  const options = useMemo((): TOptions[] => ['Projects', 'Skills'], []);
+interface IOptionsProps {
+  options: TOptions[];
+  setCurrentOption: Dispatch<TOptions>;
+  currentOption: TOptions;
+}
 
-  const [currentOption, setCurrentOption] = useState<TOptions>('Projects');
-
+export function Options({
+  currentOption,
+  options,
+  setCurrentOption,
+}: IOptionsProps) {
   return (
     <div className="flex items-center justify-center w-64 h-14 rounded-md mx-auto mt-14 bg-slate-200 p-2">
       {options.map((option) => (

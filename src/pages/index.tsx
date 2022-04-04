@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
+import { useMemo, useState } from 'react';
 import type { GetStaticProps, NextPage } from 'next';
 
 import { Contact } from '../components/Contact';
@@ -7,6 +8,7 @@ import { Options } from '../components/Options';
 import { ProfileInformations } from '../components/ProfileInformations';
 import { Projects } from '../components/Projects';
 import { Theme } from '../components/Theme';
+import { Skills } from '../components/Skills';
 
 interface IHomeProps {
   data: {
@@ -16,7 +18,13 @@ interface IHomeProps {
   };
 }
 
+type TOptions = 'Projects' | 'Skills';
+
 const Home: NextPage<IHomeProps> = ({ data }) => {
+  const options = useMemo((): TOptions[] => ['Projects', 'Skills'], []);
+
+  const [currentOption, setCurrentOption] = useState<TOptions>('Projects');
+
   return (
     <Theme>
       <>
@@ -31,9 +39,15 @@ const Home: NextPage<IHomeProps> = ({ data }) => {
 
         <Contact />
 
-        <Options />
+        <Options
+          currentOption={currentOption}
+          options={options}
+          setCurrentOption={setCurrentOption}
+        />
 
-        <Projects repos={data.repositories} />
+        {currentOption === 'Projects' && <Projects repos={data.repositories} />}
+
+        {currentOption === 'Skills' && <Skills />}
       </>
     </Theme>
   );
