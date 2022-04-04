@@ -1,6 +1,6 @@
 import { Dispatch } from 'react';
 
-type TOptions = 'Projects' | 'Skills';
+type TOptions = 'Blog' | 'Projects' | 'Skills';
 
 interface IOptionsProps {
   options: TOptions[];

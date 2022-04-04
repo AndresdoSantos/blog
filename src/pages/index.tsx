@@ -9,21 +9,29 @@ import { ProfileInformations } from '../components/ProfileInformations';
 import { Projects } from '../components/Projects';
 import { Theme } from '../components/Theme';
 import { Skills } from '../components/Skills';
+import { Posts } from '../components/Posts';
+import { getSortedPostsData } from '../lib/post';
 
 interface IHomeProps {
-  data: {
-    repositories: [];
-    publicRepos: number;
-    yearsInGithub: string;
-  };
+  repositories: [];
+  publicRepos: number;
+  yearsInGithub: string;
+  allPostsData: any;
 }
 
-type TOptions = 'Projects' | 'Skills';
+type TOptions = 'Blog' | 'Projects' | 'Skills';
 
-const Home: NextPage<IHomeProps> = ({ data }) => {
-  const options = useMemo((): TOptions[] => ['Projects', 'Skills'], []);
+const Home: NextPage<IHomeProps> = ({
+  allPostsData,
+  publicRepos,
+  repositories,
+  yearsInGithub,
+}) => {
+  const options = useMemo((): TOptions[] => ['Blog', 'Projects', 'Skills'], []);
 
-  const [currentOption, setCurrentOption] = useState<TOptions>('Projects');
+  const [currentOption, setCurrentOption] = useState<TOptions>('Blog');
+
+  console.log(allPostsData);
 
   return (
     <Theme>
@@ -31,11 +39,9 @@ const Home: NextPage<IHomeProps> = ({ data }) => {
         <Header />
 
         <ProfileInformations
-          repositories={data.publicRepos}
-          yearsWork={data.yearsInGithub}
+          repositories={publicRepos}
+          yearsWork={yearsInGithub}
         />
-
-        {console.log(data)}
 
         <Contact />
 
@@ -45,7 +51,9 @@ const Home: NextPage<IHomeProps> = ({ data }) => {
           setCurrentOption={setCurrentOption}
         />
 
-        {currentOption === 'Projects' && <Projects repos={data.repositories} />}
+        {currentOption === 'Blog' && <Posts posts={allPostsData} />}
+
+        {currentOption === 'Projects' && <Projects repos={repositories} />}
 
         {currentOption === 'Skills' && <Skills />}
       </>
@@ -74,16 +82,17 @@ export const getStaticProps: GetStaticProps = async () => {
     })
     .then((data) => data);
 
+  const allPostsData = getSortedPostsData();
+
   return {
     props: {
-      data: {
-        repositories,
-        publicRepos: publicRepos.public_repos,
-        yearsInGithub: `${
-          +publicRepos.updated_at.split('-')[0] -
-          +publicRepos.created_at.split('-')[0]
-        }`,
-      },
+      repositories,
+      publicRepos: publicRepos.public_repos,
+      yearsInGithub: `${
+        +publicRepos.updated_at.split('-')[0] -
+        +publicRepos.created_at.split('-')[0]
+      }`,
+      allPostsData,
     },
     revalidate: 60 * 60 * 60 * 3, // 3 hours
   };
