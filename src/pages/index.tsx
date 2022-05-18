@@ -1,101 +1,120 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { useMemo, useState } from 'react';
-import type { GetStaticProps, NextPage } from 'next';
+import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
 
-import { Contact } from '../components/Contact';
-import { Header } from '../components/Header';
-import { Options } from '../components/Options';
-import { ProfileInformations } from '../components/ProfileInformations';
-import { Projects } from '../components/Projects';
-import { Theme } from '../components/Theme';
-import { Skills } from '../components/Skills';
-import { Posts } from '../components/Posts';
-import { getSortedPostsData } from '../lib/post';
+type Tab = 'Início' | 'Projetos' | 'Livros - O que estou lendo';
 
-interface IHomeProps {
-  repositories: [];
-  publicRepos: number;
-  yearsInGithub: string;
-  allPostsData: any;
-}
+const Home: NextPage = () => {
+  const tabs = useMemo(
+    (): Tab[] => ['Início', 'Projetos', 'Livros - O que estou lendo'],
+    []
+  );
 
-type TOptions = 'Blog' | 'Projects' | 'Skills';
+  const { push } = useRouter();
 
-const Home: NextPage<IHomeProps> = ({
-  allPostsData,
-  publicRepos,
-  repositories,
-  yearsInGithub,
-}) => {
-  const options = useMemo((): TOptions[] => ['Blog', 'Projects', 'Skills'], []);
-
-  const [currentOption, setCurrentOption] = useState<TOptions>('Blog');
-
-  console.log(allPostsData);
+  const [currentTab, setCurrentTab] = useState<Tab>('Início');
 
   return (
-    <Theme>
-      <>
-        <Header />
+    <>
+      <div className="flex items-center justify-center py-3 bg-red-500">
+        <h1 className="text-xs text-white">Work in progress</h1>
+      </div>
 
-        <ProfileInformations
-          repositories={publicRepos}
-          yearsWork={yearsInGithub}
-        />
+      <header className="flex items-center bg-black h-16 px-4">
+        <div className="flex items-end">
+          <h1 className="text-slate-100 font-medium text-xs tracking-[0.5em]">
+            ANDRES
+          </h1>
+          <h1 className="text-orange-500 font-medium">_</h1>
+        </div>
 
-        <Contact />
+        <nav className="flex items-center space-x-4 ml-20">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              className={`text-slate-100 text-xs ${
+                tab === currentTab && 'border-b'
+              }`}
+              onClick={() => setCurrentTab(tab)}
+            >
+              <p>{tab}</p>
+            </button>
+          ))}
+        </nav>
+      </header>
 
-        <Options
-          currentOption={currentOption}
-          options={options}
-          setCurrentOption={setCurrentOption}
-        />
+      {currentTab === 'Início' && (
+        <div className="mt-10 mx-auto max-w-5xl">
+          <div className="bg-black p-4 w-60">
+            <h1 className="font-bold text-white text-2xl">
+              Tudo o que eu sei sobre programação{' '}
+              <h1 className="text-orange-500 font-medium">_</h1>
+            </h1>
+          </div>
 
-        {currentOption === 'Blog' && <Posts posts={allPostsData} />}
+          <ul className="mt-10">
+            <li className="my-5">
+              <h1>Por que usar React para MVP?</h1>
+              <p className="text-xs text-gray-500">
+                Além de ser performático o universo React traz muitas opções
+                para quem quer trabalhar com MVP.
+              </p>
+            </li>
 
-        {currentOption === 'Projects' && <Projects repos={repositories} />}
+            <li>
+              <h1>Svelte, um guia completo para iniciar</h1>
+              <p className="text-xs text-gray-500">
+                Svelte é um framework performático ótimo para trabalhar com
+                JavaScript.
+              </p>
+            </li>
+          </ul>
+        </div>
+      )}
 
-        {currentOption === 'Skills' && <Skills />}
-      </>
-    </Theme>
+      {currentTab === 'Projetos' && (
+        <div className="mt-10 mx-auto max-w-5xl">
+          <div className="bg-black p-4 w-60">
+            <h1 className="font-bold text-white text-2xl">
+              Meus projetos do Github{' '}
+              <h1 className="text-orange-500 font-medium">_</h1>
+            </h1>
+          </div>
+
+          <ul className="mt-10">
+            <li className="my-5">
+              <h1>Wallet</h1>
+              <p className="text-xs text-gray-500">
+                Wallet é um app que busca te ajudar no controle financeiro.
+              </p>
+            </li>
+          </ul>
+        </div>
+      )}
+
+      {currentTab === 'Livros - O que estou lendo' && (
+        <div className="mt-10 mx-auto max-w-5xl">
+          <div className="bg-black p-4 w-60">
+            <h1 className="font-bold text-white text-2xl">
+              O que eu ando lendo{' '}
+              <h1 className="text-orange-500 font-medium">_</h1>
+            </h1>
+          </div>
+
+          <ul className="mt-10">
+            <li className="my-5">
+              <h1>Biografia Steve Jobs</h1>
+              <p className="text-xs text-gray-500">
+                Steve Jobs saiu da Atari para fazer uma viagem a Índia em busca
+                de salvação.
+              </p>
+            </li>
+          </ul>
+        </div>
+      )}
+    </>
   );
-};
-
-export const getStaticProps: GetStaticProps = async () => {
-  const repositories = await fetch(
-    'https://api.github.com/users/AndresdoSantos/repos'
-  )
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw response;
-    })
-    .then((data) => data);
-
-  const publicRepos = await fetch('https://api.github.com/users/AndresdoSantos')
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw response;
-    })
-    .then((data) => data);
-
-  const allPostsData = getSortedPostsData();
-
-  return {
-    props: {
-      repositories,
-      publicRepos: publicRepos.public_repos,
-      yearsInGithub: `${
-        +publicRepos.updated_at.split('-')[0] -
-        +publicRepos.created_at.split('-')[0]
-      }`,
-      allPostsData,
-    },
-    revalidate: 60 * 60 * 60 * 3, // 3 hours
-  };
 };
 
 export default Home;
