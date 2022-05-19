@@ -1,48 +1,20 @@
 /* eslint-disable jsx-a11y/alt-text */
-import { useMemo, useState } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
+
+import { Header } from '../components/Header';
 
 type Tab = 'Início' | 'Projetos' | 'Livros - O que estou lendo';
 
 const Home: NextPage = () => {
-  const tabs = useMemo(
-    (): Tab[] => ['Início', 'Projetos', 'Livros - O que estou lendo'],
-    []
-  );
-
   const { push } = useRouter();
 
   const [currentTab, setCurrentTab] = useState<Tab>('Início');
 
   return (
     <>
-      <div className="flex items-center justify-center py-3 bg-red-500">
-        <h1 className="text-xs text-white">Work in progress</h1>
-      </div>
-
-      <header className="flex items-center bg-black h-16 px-4">
-        <div className="flex items-end">
-          <h1 className="text-slate-100 font-medium text-xs tracking-[0.5em]">
-            ANDRES
-          </h1>
-          <h1 className="text-orange-500 font-medium">_</h1>
-        </div>
-
-        <nav className="flex items-center space-x-4 ml-20">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              className={`text-slate-100 text-xs ${
-                tab === currentTab && 'border-b'
-              }`}
-              onClick={() => setCurrentTab(tab)}
-            >
-              <p>{tab}</p>
-            </button>
-          ))}
-        </nav>
-      </header>
+      <Header currentTab={currentTab} setCurrentTab={setCurrentTab} />
 
       {currentTab === 'Início' && (
         <div className="mt-10 mx-auto max-w-5xl">

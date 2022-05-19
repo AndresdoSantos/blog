@@ -1,4 +1,4 @@
-import { createContext, Dispatch, useReducer, useState } from 'react';
+import { createContext, Dispatch, useState } from 'react';
 
 interface ThemeContextData {
   isDarkMode: boolean;

@@ -1,33 +1,46 @@
-/* eslint-disable jsx-a11y/alt-text */
-// import { useContext } from 'react';
-// import { MdDarkMode } from 'react-icons/md';
+import { Dispatch, useMemo, useState } from 'react';
 
-// import { ThemeContext } from '../contexts/ThemeContext';
+type Tab = 'Início' | 'Projetos' | 'Livros - O que estou lendo';
 
-import { Image } from './Image';
-import { SocialMedia } from './SocialMedia';
+type HeaderProps = {
+  setCurrentTab: Dispatch<Tab>;
+  currentTab: Tab;
+};
 
-export function Header() {
-  // const { isDarkMode, setIsDarkMode } = useContext(ThemeContext);
+export function Header({ currentTab, setCurrentTab }: HeaderProps) {
+  const tabs = useMemo(
+    (): Tab[] => ['Início', 'Projetos', 'Livros - O que estou lendo'],
+    []
+  );
 
   return (
-    <header className="flex flex-col lg:flex-row items-center justify-between pt-8">
-      <div className="flex items-center mr-auto lg:mr-0">
-        <Image />
-
-        <div className="flex flex-col ml-6">
-          <strong className="text-xl">Andres Amaral</strong>
-          <span className="text-xs text-slate-600">
-            Web and mobile developer.
-          </span>
-        </div>
+    <>
+      <div className="flex items-center justify-center py-3 bg-red-500">
+        <h1 className="text-xs text-white">Work in progress</h1>
       </div>
 
-      <SocialMedia />
+      <header className="flex items-center bg-black h-16 px-4">
+        <div className="flex items-end">
+          <h1 className="text-slate-100 font-medium text-xs tracking-[0.5em]">
+            ANDRES
+          </h1>
+          <h1 className="text-orange-500 font-medium">_</h1>
+        </div>
 
-      {/**<button type="button" onClick={() => setIsDarkMode(!isDarkMode)}>
-        <MdDarkMode />
-      </button> */}
-    </header>
+        <nav className="flex items-center space-x-4 ml-20">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              className={`text-slate-100 text-xs ${
+                tab === currentTab && 'border-b'
+              }`}
+              onClick={() => setCurrentTab(tab)}
+            >
+              <p>{tab}</p>
+            </button>
+          ))}
+        </nav>
+      </header>
+    </>
   );
 }
